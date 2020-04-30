@@ -26,7 +26,7 @@ opts = setvaropts(opts, ["Var2", "Var3", "Var4"], "WhitespaceRule", "preserve");
 opts = setvaropts(opts, ["Var2", "Var3", "Var4"], "EmptyFieldRule", "auto");
 
 % Import the data
-tbl = readtable("C:\Users\Bruger\OneDrive\Dokumenter\Uni\Sundhedsteknologi\6. semester\Projekt\ST6_app\data\data_for_mathias_v1.txt", opts);
+tbl = readtable("data_for_mathias_v1.txt", opts);
 
 % Convert to output type
 FlowLs = tbl.FlowLs;
@@ -106,7 +106,7 @@ endIn = find(yFilt(startIn:end) < 0, 1) + startIn; % Can be improved by setting 
 if(endIn > (startIn+1.5*sF))%Threshold between start of breath to finding end.
     ends(i)=endIn;
     %Finding duration of inspiration
-    dur = (endIn-startIn)/sF;
+    dur = (endIn-startIn)/sF; % TODO replace StartIn with start(i-1),
     dursIn(i)=dur;
 
     %Finding volume of inspiration
@@ -179,10 +179,9 @@ ylabel("Gain")
 grid on;
 text(1,1.05,"1Hz")
 line([1 1],[0 1.2],'color','k','Linestyle','--')
-%% frekvensplot
+%% frekvensplot af rå signal
 figure;
-yFilt = y;
-fy = abs(fft(detrend(yFilt)));
+fy = abs(fft(detrend(y)));
 xf = linspace(0,sF,length(fy));
 subplot(1,2,1)
 stem(xf,fy)

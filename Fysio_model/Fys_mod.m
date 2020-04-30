@@ -100,19 +100,20 @@ end
 figure;
 plot(Pmus)
 
-%% Test
+%% "Den rigtige fysiologiske model"
 R_in = 2.5;
 R_ex = R_in;
 C = 0.2;
-pMax = -50;
+pMax = 50;
 tauC = R_in*C;
 tauR = R_ex*C;
 Ttot = 6;
 Ti_E = 1/4;
 Ti = Ttot*Ti_E;
 Te = Ttot-Ti;
-nSamples = 2000;
-sF = Ttot/nSamples;
+sF = 2000;
+nSamples = Ttot*sF;
+
 
 t = linspace(0,Ttot,nSamples);
 x = t;
@@ -131,10 +132,19 @@ for i = 1:length(t)
             end
 end
 %figure;
-plot(x,Pmus)
+%plot(x,Pmus)
 hold on;
 
-Qv = ((Pmus)/((R_in+R_ex)/2)); %% Todo, fix size
+dt = 1/sF;                   % seconds per sample
+t2 = (0:dt:Ttot-dt)';     % seconds
+%%Sine wave:
+Fc = 50;                     % hertz
+A = 0.001; %amplitude
+noise = A*sin(2*pi*Fc*t2);
+
+
+Qv = (diff(Pmus)/((R_in+R_ex)/2)); %% Todo, fix size
+Qv = [Qv 0] + noise';
 %Qv = (Pmus/((R_in+R_ex)/2))./nSamples; % Divide by samples. %%TODO overvej om der skal regnes med Delta P i stedet? altså diff?
 V = trapz(Qv(1:index_i_end));
 plot(x,Qv)

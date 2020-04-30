@@ -32,17 +32,18 @@ for i = 1:length(t)
             end
 end
 
-dt = 1/sF;                   % seconds per sample
-t2 = (0:dt:Ttot-dt)';     % seconds
-%%Sine wave:
-Fc = 50;                     % hertz
-A = 0.001; % amplitude of noise
-noise = A*sin(2*pi*Fc*t2);
+  Fs = 8000;                   % samples per second
+   dt = 1/Fs;                   % seconds per sample
+   StopTime = 0.25;             % seconds
+   t = (0:dt:StopTime-dt)';     % seconds
+   %%Sine wave:
+   Fc = 60;                     % hertz
+   x = cos(2*pi*Fc*t);
 
 
 
 Qv = (diff(Pmus)/R_in);
-Qv = [Qv 0] + noise';% adds noise to signal TODO delete, to account for "diff" above.
+Qv = [Qv 0];%TODO delete, to account for "diff" above.
 P = Pmus;
 end
 
