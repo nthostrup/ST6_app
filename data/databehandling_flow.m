@@ -26,7 +26,7 @@ opts = setvaropts(opts, ["Var2", "Var3", "Var4"], "WhitespaceRule", "preserve");
 opts = setvaropts(opts, ["Var2", "Var3", "Var4"], "EmptyFieldRule", "auto");
 
 % Import the data
-tbl = readtable("C:\Users\Bruger\OneDrive\Dokumenter\Uni\Sundhedsteknologi\6. semester\Projekt\data\data_for_mathias_v1.txt", opts);
+tbl = readtable("C:\Users\Bruger\OneDrive\Dokumenter\Uni\Sundhedsteknologi\6. semester\Projekt\ST6_app\data\data_for_mathias_v1.txt", opts);
 
 % Convert to output type
 FlowLs = tbl.FlowLs;
@@ -39,6 +39,7 @@ clear opts tbl
 y = FlowLs;
 x = linspace(0,size(y,1)/2000,size(y,1));
 plot(x,y)
+%xlim([0 18]);
 title("Plot af rå data");
 xlabel("Tid(s)")
 ylabel("Flow (L/s)")
@@ -55,6 +56,7 @@ Wn=2*Fc/sF;
 yFilt=filtfilt(B,A,y); 
 figure;
 plot(x,yFilt)
+%xlim([0 18]);
 title("Plot af filtreret data (10Hz, 4. orden, lavpas)");
 xlabel("Tid(s)")
 ylabel("Flow (L/s)")
@@ -63,8 +65,8 @@ grid on;
 
 %% Calculations
 figure;
-findpeaks(yFilt,'MinPeakDistance', 2*sF, 'MinPeakHeight', 0.25);
-[pks, loc]=findpeaks(yFilt,'MinPeakDistance', 3*2000, 'MinPeakHeight', 0.25);
+findpeaks(yFilt,'MinPeakDistance', 3*sF, 'MinPeakHeight', 0.25);
+[pks, loc]=findpeaks(yFilt,'MinPeakDistance', 3*sF, 'MinPeakHeight', 0.25);
 
 RR = 60/(x(end)/length(pks));
 avgRespDuration = x(end)/length(pks);
