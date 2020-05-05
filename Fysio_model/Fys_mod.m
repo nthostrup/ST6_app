@@ -101,9 +101,9 @@ figure;
 plot(Pmus)
 
 %% "Den rigtige fysiologiske model"
-R_in = 2.5;
+R_in = 12;
 R_ex = R_in;
-C = 0.2;
+C = 0.056;
 pMax = 50;
 tauC = R_in*C;
 tauR = R_ex*C;
@@ -132,8 +132,8 @@ for i = 1:length(t)
             end
 end
 %figure;
-%plot(x,Pmus)
-hold on;
+plot(x,Pmus)
+figure;
 
 dt = 1/sF;                   % seconds per sample
 t2 = (0:dt:Ttot-dt)';     % seconds
@@ -150,3 +150,63 @@ V = trapz(Qv(1:index_i_end));
 plot(x,Qv)
 %Qv_avg = mean(Qv(1:index_i_end));
 %V = Qv_avg*Ti;
+
+%% "Fysiologiske model med Flow"
+R_in = 12;
+R_ex = R_in;
+C = 0.056;
+E = 1/C;
+pMax = 100;
+tauC = R_in*C;
+tauR = R_ex*C;
+Ttot = 6;
+Ti_E = 1/4;
+Ti = Ttot*Ti_E;
+Te = Ttot-Ti;
+sF = 1000;
+nSamples = Ttot*sF;
+V0_exp = pMax/E;
+V0_ins = 0;
+
+t = linspace(0,Ttot,nSamples);
+x = t;
+Pmus = zeros(1,length(t));
+Qv = zeros(1,length(t));
+V =  zeros(1,length(t));
+
+dt=1/sF;
+
+for i = 1:length(t)
+            if t(i) <= Ti_E*Ttot
+                Pmus(i) = pMax*(1-exp(-(1/tauC)*t(i)));
+                Qv(i) = Pmus(i)/R_in;
+                V(i) = Pmus(i)/E;
+                %V(i) = V0_ins + Qv(i)*dt; %Makes sense but doesnt work
+                %V0_ins = V(i);
+                
+                
+                ti_end = t(i);
+                index_i_end = i;
+                Pmus_end = Pmus(i);
+                
+                V0_exp = V(i);
+            
+            elseif Ti_E*Ttot < t(i) && t(i) <= Ttot
+                Pmus(i) = Pmus_end*(exp(-(1/tauR)*(t(i)-ti_end)));  %(t(i)-ti_end) to make expiration start as if from t=0
+                Qv(i) = -1*Pmus(i)/R_in; %Expiratory flow, by definition negative
+                V(i) = V(i-1)+Qv(i)*dt;
+                %V(i) = V0_exp+Qv(i)*dt; %Makes sense but doesnt work
+                %V0_exp = V(i);
+            end
+end
+%figure;
+plot(x,Pmus)
+figure;
+
+dt = 1/sF;                   % seconds per sample
+t2 = (0:dt:Ttot-dt)';     % seconds
+%%Sine wave:
+Fc = 50;                     % hertz
+A = 0.1; %amplitude
+noise = A*sin(2*pi*Fc*t2);
+Qv = Qv + noise';
