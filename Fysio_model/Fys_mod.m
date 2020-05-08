@@ -165,8 +165,6 @@ Ti = Ttot*Ti_E;
 Te = Ttot-Ti;
 sF = 1000;
 nSamples = Ttot*sF;
-V0_exp = pMax/E;
-V0_ins = 0;
 
 t = linspace(0,Ttot,nSamples);
 x = t;
@@ -175,33 +173,31 @@ Qv = zeros(1,length(t));
 V =  zeros(1,length(t));
 
 dt=1/sF;
+%Equation of motion: Pmus = E*V + R*Qv => Qv = (Pmus - EV)/R
+%Calculating starting conditions with V=0:
+Pmus(1) = pMax*(1-exp(-(1/tauC)*t(1)));
+V(1) = 0; 
+Qv(1) = (Pmus(1)-E*V(1))/R_in;
 
-for i = 1:length(t)
+for i = 2:length(t)
             if t(i) <= Ti_E*Ttot
                 Pmus(i) = pMax*(1-exp(-(1/tauC)*t(i)));
-                Qv(i) = Pmus(i)/R_in;
-                V(i) = Pmus(i)/E;
-                %V(i) = V0_ins + Qv(i)*dt; %Makes sense but doesnt work
-                %V0_ins = V(i);
+                V(i) = V(i-1) + Qv(i-1)*dt; 
+                Qv(i) = (Pmus(i)-E*V(i))/R_in;
                 
-                
-                ti_end = t(i);
-                index_i_end = i;
-                Pmus_end = Pmus(i);
-                
-                V0_exp = V(i);
-            
+                ti_end = t(i); %Used in expiration
+                Pmus_end = Pmus(i);%Used in expiration
+                            
             elseif Ti_E*Ttot < t(i) && t(i) <= Ttot
                 Pmus(i) = Pmus_end*(exp(-(1/tauR)*(t(i)-ti_end)));  %(t(i)-ti_end) to make expiration start as if from t=0
-                Qv(i) = -1*Pmus(i)/R_in; %Expiratory flow, by definition negative
-                V(i) = V(i-1)+Qv(i)*dt;
-                %V(i) = V0_exp+Qv(i)*dt; %Makes sense but doesnt work
-                %V0_exp = V(i);
+                V(i) = V(i-1) + Qv(i-1)*dt;
+                Qv(i) = (Pmus(i)-E*V(i))/R_ex;
+                
             end
 end
 %figure;
 plot(x,Pmus)
-figure;
+title("Tryk");
 
 dt = 1/sF;                   % seconds per sample
 t2 = (0:dt:Ttot-dt)';     % seconds
@@ -210,3 +206,19 @@ Fc = 50;                     % hertz
 A = 0.1; %amplitude
 noise = A*sin(2*pi*Fc*t2);
 Qv = Qv + noise';
+
+figure;
+plot(x,Qv);
+hold on;
+plot(x,V);
+title("Flow og vol");
+legend("flow","volumen");
+%% Calulate volume based on flow
+vtest = zeros(1,length(Qv));
+vtest(1) = 0;
+for i=2:length(Qv)
+    vtest(i) = vtest(i-1) + Qv(i)*dt; 
+    
+
+end
+cumsumFlow = cumsum(Qv)*dt; %Cumulative sum of Qv doesnt give zero??
