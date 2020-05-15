@@ -62,23 +62,31 @@ detectionCounter = detectionCounter -1;
 
 
 %% T.2.1: Test af detektering af åndedræt case 2 signal fra model
-%dataopsætning
-sF = 1000;
-amount = 10;
-duration = 10;
+
 
 R = randi([16 33],[1 amount]);
 C = randi([43 75],[1 amount])./1000;
 pmax = randi([49 105],[1 amount]);
 %% 
 close all;
+R = [28,24,32,17,29,29,26,19,26,21];
+C = [0.047000000000000,0.050000000000000,0.072000000000000,0.045000000000000,0.051000000000000,0.044000000000000,0.057000000000000,0.043000000000000,0.072000000000000,0.049000000000000];
+pmax = [54,66,74,54,105,67,65,52,65,51];
+
 %data setup
+sF = 1000;
+amount = 10;
+duration = 10;
+
 flows = zeros(amount,sF*duration); %Each breath with flow simulation gets its own column in the matrix 
 pressures = zeros(amount,sF*duration);
+
 numberToRun = 1;
+
 %Generate breaths
 for i = 1:amount
     [flows(i,:), pressures(i,:)] = breathSimulation(R(numberToRun), C(numberToRun), pmax(numberToRun), duration,0, sF);
+    %[flows(i,:), pressures(i,:)] = breathSimulation(33, 0.075, 49, duration,0, sF);
 end
 
 %Concatenate breaths to one long sample
@@ -95,7 +103,7 @@ ends = zeros(1,amount);
 detectionCounter = 1;
 
 %Forventetoutput
-EXP_OUT_starts = [1 10002 20007:10000:100000];
+EXP_OUT_starts = [2 10002 20007:10000:100000];
 %EXP_OUT_ends= duration*sF*(1/4):duration*sF:duration*amount*sF; 
 EXP_OUT_ends=[2940 12945:10000:100000] 
 EXP_OUT_detectionCounter = amount;
