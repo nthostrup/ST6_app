@@ -26,7 +26,7 @@ opts = setvaropts(opts, ["Var2", "Var3", "Var4"], "WhitespaceRule", "preserve");
 opts = setvaropts(opts, ["Var2", "Var3", "Var4"], "EmptyFieldRule", "auto");
 
 % Import the data
-tbl = readtable("data_for_mathias_v1.txt", opts);
+tbl = readtable("data/data_for_mathias_v1.txt", opts);
 
 % Convert to output type
 FlowLs = tbl.FlowLs;
@@ -39,7 +39,7 @@ clear opts tbl
 y = FlowLs;
 x = linspace(0,size(y,1)/2000,size(y,1));
 plot(x,y)
-%xlim([0 18]);
+xlim([0 18]);
 title("Plot af rå data");
 xlabel("Tid(s)")
 ylabel("Flow (L/s)")
@@ -48,16 +48,17 @@ grid on;
 
 %% filtrering
 sF = 2000; %sample frequency
-Fc=10; % Cut-off frequency (from 2 Hz to 6 Hz depending to the type of your electrod)
+Fc=12; % Cut-off frequency (from 2 Hz to 6 Hz depending to the type of your electrod)
 N=4; % Filter Order
 Wn=2*Fc/sF;
 [B, A] = butter(N,Wn, 'low'); %filter's parameters 
 
 yFilt=filtfilt(B,A,y); 
 figure;
+hold on;
 plot(x,yFilt)
-%xlim([0 18]);
-title("Plot af filtreret data (10Hz, 4. orden, lavpas)");
+xlim([0 18]);
+title("Plot af filtreret data (12Hz, 4. orden, lavpas)");
 xlabel("Tid(s)")
 ylabel("Flow (L/s)")
 legend("Flow, filtreret data")
@@ -72,7 +73,7 @@ RR = 60/(x(end)/length(pks));
 avgRespDuration = x(end)/length(pks);
 
 %Initializing algorithm values
-numberOfBreathsToFind = 120;
+numberOfBreathsToFind = 125;
 endIn = 1;
 ends = zeros(1,numberOfBreathsToFind);
 starts = zeros(1,numberOfBreathsToFind);
@@ -173,12 +174,12 @@ Qv_avg = mean(sum);
 figure;
 plotHandle = semilogx((sF*W)/(2*pi),abs(H));
 xlim([0 70]);
-title("Bodeplot af filter (10Hz, 4. orden, lavpas)");
+title("Bodeplot af filter (12Hz, 4. orden, lavpas)");
 xlabel("Frekvens (Hz)")
 ylabel("Gain")
 grid on;
-text(1,1.05,"1Hz")
-line([1 1],[0 1.2],'color','k','Linestyle','--')
+%text(1,1.05,"1Hz")
+%line([1 1],[0 1.2],'color','k','Linestyle','--')
 %% frekvensplot af rå signal
 figure;
 fy = abs(fft(detrend(y)));

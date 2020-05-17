@@ -152,11 +152,11 @@
 % %V = Qv_avg*Ti;
 
 %% "Fysiologiske model med Flow"
-R_in = 10;
+R_in = 22;
 R_ex = R_in;
-C = 0.043;
+C = 0.059;
 E = 1/C;
-pMax = 100;
+pMax = 70;
 tauC = R_in*C;
 tauR = R_ex*C;
 Ttot = 10;
@@ -178,13 +178,17 @@ dt=1/sF;
 Pmus(1) = pMax*(1-exp(-(1/tauC)*t(1)));
 V(1) = 0; 
 Qv(1) = (Pmus(1)-E*V(1))/R_in;
+threshold = 20;
 
 for i = 2:length(t)
             if t(i) <= Ti_E*Ttot
                 Pmus(i) = pMax*(1-exp(-(1/tauC)*t(i)));
-                V(i) = V(i-1) + Qv(i-1)*dt; 
-                Qv(i) = (Pmus(i)-E*V(i))/R_in;
-                
+                V(i) = V(i-1) + Qv(i-1)*dt;
+                %if(Pmus(i) > threshold)
+                    Qv(i) = (Pmus(i)-E*V(i))/R_in;
+                %else
+                    %Qv(i)=0;
+                %end
                 ti_end = t(i); %Used in expiration
                 Pmus_end = Pmus(i);%Used in expiration
                             
