@@ -1,4 +1,4 @@
-function [Qv,P] = breathSimulation(RR,Compl, MIP, breathDuration, IMTmodstand, sampleFrekvens)
+function [Qv,P, V] = breathSimulation(RR,Compl, MIP, breathDuration, IMTmodstand, sampleFrekvens)
 %breathSimulation: Function to model pressure and flow of breath
 %
 modst_threshold = IMTmodstand; %TODO impl. simulering med IMT threshold

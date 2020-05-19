@@ -55,9 +55,17 @@ EXP_OUT_starts'
 starts'
 EXP_OUT_ends'
 ends'
-plot(data)
+x = linspace(0,length(data)/sF,length(data));
+plot(x,data)
 grid on;
-
+%% Plot starts and ends
+hold on;
+plot(starts./sF,data(starts)./sF,'*r');
+plot(ends./sF,data(ends)./sF,'*k');
+legend("signal","starts","ends")
+xlabel("tid(s)")
+ylabel("flow(L/s)")
+title("Plot af signal og detekteringer")
 %% T.2.1: Test af detektering af åndedræt case 2 signal fra model INTEGRATIONSTEST
 
 
@@ -77,13 +85,13 @@ duration = 10;
 
 flows = zeros(amount,sF*duration); %Each breath with flow simulation gets its own column in the matrix 
 pressures = zeros(amount,sF*duration);
-
+volumes = zeros(amount,sF*duration);
 numberToRun = 1;
 
 %Generate breaths
 for i = 1:amount
-    [flows(i,:), pressures(i,:)] = breathSimulation(R(numberToRun), C(numberToRun), pmax(numberToRun), duration,0, sF);
-    %[flows(i,:), pressures(i,:)] = breathSimulation(33, 0.075, 49, duration,0, sF);
+    %[flows(i,:), pressures(i,:)] = breathSimulation(R(numberToRun), C(numberToRun), pmax(numberToRun), duration,0, sF);
+    [flows(i,:), pressures(i,:), volumes(i,:)] = breathSimulation(16, 0.043, 105, duration,0, sF);
 end
 
 %Concatenate breaths to one long sample
@@ -125,6 +133,14 @@ EXP_OUT_starts'
 starts'
 EXP_OUT_ends'
 ends'
-plot(data)
+x = linspace(0,length(data)/sF,length(data));
+plot(x,data)
 grid on;
-
+%% Plot starts and ends
+hold on;
+plot(starts./sF,data(starts)./sF,'*r');
+plot(ends./sF,data(ends)./sF,'*k');
+legend("signal","starts","ends")
+xlabel("tid(s)")
+ylabel("flow(L/s)")
+title("Plot af signal og detekteringer, R=16cmH2O/L/s, C=0.043cmH2O/L, Pmax = 105cmH2O")
